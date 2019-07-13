@@ -12,8 +12,12 @@ public class View {
     }
 
     public void showResult(Set<File> result) {
-        for (File s : result) {
-            System.out.println(s.getName());
+        if (result.isEmpty()) {
+            System.out.println("not found");
+            return;
+        }
+        for (File file : result) {
+            System.out.println(file.getPath());
         }
     }
 }

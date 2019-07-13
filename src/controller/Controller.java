@@ -1,51 +1,80 @@
 package controller;
 
-import models.analyzer.NgramSearchAnalyzer;
+import models.search.ListType;
 import models.search.Search;
+import models.tokenizer.ExactSearchTokenizer;
+import models.tokenizer.FuzzySearchTokenizer;
 import models.tokenizer.NgramSearchTokenizer;
+import models.tokenizer.Tokenizer;
 import view.FileImporter;
 import view.View;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Controller {
-    private static final int NGRAM_MIN = 3;
-    private static final int NGRAM_MAX = 100;
-    private View view = new View();
+    private final View view = new View();
     private final String PATH;
-    private final NgramSearchTokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
-    private final NgramSearchAnalyzer ngramSearchAnalyzer = new NgramSearchAnalyzer();
+    private final Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
+    private final Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
+    private final Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
+    private final Search search = new Search();
+    private Set<File> result;
+    private Set<String> queryTokens;
+    private long currentTime;
 
     public Controller(String PATH) {
         this.PATH = PATH;
     }
 
     public void main() throws IOException {
-        FileImporter fileImporter = new FileImporter(PATH);
-
-        Search search = new Search();
-
-        Map<File, String> filesData = fileImporter.readFiles();
-
-        filesData.forEach(((file, text) ->
-                search.insert(
-                        file, ngramSearchTokenizer.tokenize(
-                                ngramSearchAnalyzer.cleanText(text), NGRAM_MIN, NGRAM_MAX
-                        )
-                )
-        ));
+        preprocess();
 
         while (true) {
             String query = view.readNextLine();
-            Set<File> result = new HashSet<>();
+            result = new HashSet<>();
 
-            search.search(query, result);
+            queryProcess(query);
+
+            doSearch(ListType.EXACT, exactSearchTokenizer);
+            doSearch(ListType.NGRAM, ngramSearchTokenizer);
+            doSearch(ListType.FUZZY, fuzzySearchTokenizer);
 
             view.showResult(result);
         }
+    }
+
+    private void preprocess() throws IOException {
+        FileImporter fileImporter = new FileImporter(PATH);
+
+        Map<File, String> filesData = fileImporter.readFiles();
+
+        currentTime = System.currentTimeMillis();
+
+        filesData.forEach(((file, text) -> {
+            String cleanText = ngramSearchTokenizer.cleanText(text);
+            search.insertNgram(file, ngramSearchTokenizer.tokenize(cleanText));
+            search.insertExact(file, exactSearchTokenizer.tokenize(cleanText));
+        }));
+
+        System.out.println("preprocess duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+    }
+
+    private void queryProcess(String query) {
+        currentTime = System.currentTimeMillis();
+
+        queryTokens = exactSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
+
+        System.out.println("query process duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+    }
+
+    private void doSearch(ListType listType, Tokenizer tokenizer) {
+        currentTime = System.currentTimeMillis();
+
+        search.setQueryTokenizer(tokenizer, listType);
+        search.search(new ArrayList<>(queryTokens), 0, null, result);
+
+        System.out.println(listType + " search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
     }
 }
