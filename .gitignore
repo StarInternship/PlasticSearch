@@ -86,3 +86,5 @@ fabric.properties
 # visual paradigm files
 *.vpp
 
+# test files
+text_files/*
