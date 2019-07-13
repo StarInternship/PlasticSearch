@@ -6,8 +6,8 @@ import java.io.File;
 import java.util.*;
 
 public class Search {
-    private Tokenizer queryTokenizer;
     private final Map<File, Set<String>> tokensList = new HashMap<>();
+    private Tokenizer queryTokenizer;
 
     public void insert(File file, Set<String> tokens) {
         tokensList.put(file, tokens);
@@ -17,7 +17,7 @@ public class Search {
         this.queryTokenizer = queryTokenizer;
     }
 
-    public void search(LinkedList<String> queryTokens, LinkedList<File> files, Set<File> result) {
+    public void search(ArrayList<String> queryTokens, int index, LinkedList<File> files, Set<File> result) {
         if (files == null) {
             files = new LinkedList<>(tokensList.keySet());
         }
@@ -29,7 +29,7 @@ public class Search {
             return;
         }
 
-        String currentToken = queryTokens.poll();
+        String currentToken = queryTokens.get(index);
         LinkedList<String> developedTokens = queryTokenizer.develop(currentToken);
 
         for (String token : developedTokens) {
@@ -41,7 +41,7 @@ public class Search {
                 }
             }
 
-            search(queryTokens, newFiles, result);
+            search(queryTokens, index + 1, newFiles, result);
         }
     }
 }

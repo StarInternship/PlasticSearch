@@ -8,16 +8,18 @@ import view.View;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Controller {
     private static final int NGRAM_MIN = 3;
     private static final int NGRAM_MAX = 100;
-    private View view = new View();
     private final String PATH;
     private final NgramSearchTokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
     private final FuzzySearchTokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
+    private View view = new View();
 
     public Controller(String PATH) {
         this.PATH = PATH;
@@ -45,10 +47,10 @@ public class Controller {
             Set<String> queryTokens = ngramSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
 
             search.setQueryTokenizer(ngramSearchTokenizer);
-            search.search(new LinkedList<>(queryTokens), null, result);
+            search.search(new ArrayList<>(queryTokens), 0, null, result);
 
             search.setQueryTokenizer(fuzzySearchTokenizer);
-            search.search(new LinkedList<>(queryTokens), null, result);
+            search.search(new ArrayList<>(queryTokens), 0, null, result);
 
             view.showResult(result);
         }
