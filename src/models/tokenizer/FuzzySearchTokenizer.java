@@ -1,13 +1,14 @@
 package models.tokenizer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class FuzzySearchTokenizer implements Tokenizer {
     private static List<Character> characters = new ArrayList<>();
-
+    private Consumer<String> insert = this::insert;
+    private Consumer<String> delete = this::delete;
+    private Consumer<String> substitute = this::substitute;
+    private ArrayList<Consumer> consumers = new ArrayList<>();
     static {
         for (char c = 'a'; c <= 'z'; c++) {
             characters.add(c);
@@ -17,14 +18,25 @@ public class FuzzySearchTokenizer implements Tokenizer {
         }
     }
 
+    public FuzzySearchTokenizer(){
+        consumers.add(insert);
+        consumers.add(substitute);
+        consumers.add(delete);
+    }
+
     @Override
     public LinkedList<String> develop(String token) {
         LinkedList<String> developedTokens = new LinkedList<>(Collections.singletonList(token));
-
-        developedTokens.addAll(insert(token));
-        developedTokens.addAll(delete(token));
-        developedTokens.addAll(substitute(token));
-
+        for (int i = 0; i < 2; i++) {
+            LinkedList<String> tempDevelopedTokens = new LinkedList<>();
+            for (String tok : developedTokens) {
+                tempDevelopedTokens.addAll(insert(tok));
+                tempDevelopedTokens.addAll(delete(tok));
+                tempDevelopedTokens.addAll(substitute(tok));
+            }
+            developedTokens.remove(token);
+            developedTokens.addAll(tempDevelopedTokens);
+        }
         return developedTokens;
     }
 
