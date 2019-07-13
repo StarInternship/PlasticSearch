@@ -3,32 +3,34 @@ package view;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class FileView {
     private final String PATH;
 
-    public FileView(String path){
+    public FileView(String path) {
         PATH = path;
     }
 
     public Map<File, String> readFiles() throws IOException {
         HashMap<File, String> filesHashMap = new HashMap<>();
         File file = new File(PATH);
-        readFile(filesHashMap,file);
+        readFile(filesHashMap, file);
         return filesHashMap;
     }
-    public void readFile( HashMap<File, String> filesHashMap ,File parent) throws IOException {
+
+    private void readFile(HashMap<File, String> filesHashMap, File parent) throws IOException {
         if (parent.isDirectory()) {
-            for (File child :
-                    parent.listFiles()) {
-                readFile(filesHashMap,child);
+            File[] files = parent.listFiles();
+
+            if (files != null) {
+                for (File child : files) {
+                    readFile(filesHashMap, child);
+                }
             }
             return;
         }
-        String s = new String(Files.readAllBytes(parent.toPath()));
-        filesHashMap.put(parent,s);
+        String text = new String(Files.readAllBytes(parent.toPath()));
+        filesHashMap.put(parent, text);
     }
 }

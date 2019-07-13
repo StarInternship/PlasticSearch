@@ -6,7 +6,10 @@ import models.tokenizer.ExactSearchTokenizer;
 import view.FileView;
 import view.View;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Controller {
     private View view = new View();
@@ -19,10 +22,16 @@ public class Controller {
 
     public void main() throws IOException {
         fileView = new FileView(PATH);
-        Search search = new Search(new ExactSearchAnalyzer(), new ExactSearchTokenizer());
-        search.preprocess(fileView.readFiles());
+        Search exactSearch = new Search(new ExactSearchAnalyzer(), new ExactSearchTokenizer());
+        exactSearch.preprocess(fileView.readFiles());
+
         while (true) {
-            view.showResult(search.search(view.readNextLine()));
+            String query = view.readNextLine();
+            Set<File> result = new HashSet<>();
+
+            exactSearch.search(query, result);
+
+            view.showResult(result);
         }
     }
 }

@@ -22,17 +22,14 @@ public class Search {
         );
     }
 
-    public List<File> search(String query) {
-        List<File> matchedFiles = new ArrayList<>();
+    public void search(String query, Set<File> result) {
         Set<String> queryTokens = tokenizer.tokenize(analyzer.cleanText(query));
 
         tokensList.forEach(((file, dataTokens) -> {
             for (String queryToken : queryTokens) {
                 if (!dataTokens.contains(queryToken)) return;
             }
-            matchedFiles.add(file);
+            result.add(file);
         }));
-
-        return matchedFiles;
     }
 }
