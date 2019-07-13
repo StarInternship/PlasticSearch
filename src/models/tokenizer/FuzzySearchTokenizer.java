@@ -37,7 +37,7 @@ public class FuzzySearchTokenizer implements Tokenizer {
     }
 
     private LinkedList<String> insert(String token) {
-        return null;
+        LinkedList<String> inserts = new LinkedList<>();
     }
 
     private LinkedList<String> substitute(String token) {
