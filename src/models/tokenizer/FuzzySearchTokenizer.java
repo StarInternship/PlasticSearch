@@ -34,8 +34,8 @@ public class FuzzySearchTokenizer implements Tokenizer {
                 tempDevelopedTokens.addAll(delete(tok));
                 tempDevelopedTokens.addAll(substitute(tok));
             }
-            developedTokens.remove(token);
             developedTokens.addAll(tempDevelopedTokens);
+            developedTokens.remove(token);
         }
         return developedTokens;
     }
