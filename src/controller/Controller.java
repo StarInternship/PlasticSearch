@@ -1,6 +1,5 @@
 package controller;
 
-import models.analyzer.NgramSearchAnalyzer;
 import models.search.Search;
 import models.tokenizer.NgramSearchTokenizer;
 import view.FileImporter;
@@ -8,9 +7,8 @@ import view.View;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Controller {
     private static final int NGRAM_MIN = 3;
@@ -18,7 +16,6 @@ public class Controller {
     private View view = new View();
     private final String PATH;
     private final NgramSearchTokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
-    private final NgramSearchAnalyzer ngramSearchAnalyzer = new NgramSearchAnalyzer();
 
     public Controller(String PATH) {
         this.PATH = PATH;
@@ -34,7 +31,7 @@ public class Controller {
         filesData.forEach(((file, text) ->
                 search.insert(
                         file, ngramSearchTokenizer.tokenize(
-                                ngramSearchAnalyzer.cleanText(text), NGRAM_MIN, NGRAM_MAX
+                                ngramSearchTokenizer.cleanText(text), NGRAM_MIN, NGRAM_MAX
                         )
                 )
         ));
@@ -43,7 +40,9 @@ public class Controller {
             String query = view.readNextLine();
             Set<File> result = new HashSet<>();
 
-            search.search(query, result);
+            search.setQueryTokenizer(ngramSearchTokenizer);
+            Set<String> queryTokens = ngramSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
+            search.search(new LinkedList<>(queryTokens), null, result);
 
             view.showResult(result);
         }
