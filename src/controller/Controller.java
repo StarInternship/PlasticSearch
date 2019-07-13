@@ -1,5 +1,6 @@
 package controller;
 
+import models.search.ListType;
 import models.search.Search;
 import models.tokenizer.FuzzySearchTokenizer;
 import models.tokenizer.NgramSearchTokenizer;
@@ -39,8 +40,7 @@ public class Controller {
                     )
             );
             search.insertExact(file, ngramSearchTokenizer.tokenize(cleanText));
-        }
-        ));
+        }));
 
         System.out.println("preprocess duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
@@ -53,12 +53,17 @@ public class Controller {
             System.out.println("query process duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
             currentTime = System.currentTimeMillis();
-            search.setQueryTokenizer(ngramSearchTokenizer);
+            search.setQueryTokenizer(ngramSearchTokenizer, ListType.EXACT);
+            search.search(new ArrayList<>(queryTokens), 0, null, result);
+            System.out.println("exact search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+
+            currentTime = System.currentTimeMillis();
+            search.setQueryTokenizer(ngramSearchTokenizer, ListType.NGRAM);
             search.search(new ArrayList<>(queryTokens), 0, null, result);
             System.out.println("ngram search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
             currentTime = System.currentTimeMillis();
-            search.setQueryTokenizer(fuzzySearchTokenizer);
+            search.setQueryTokenizer(fuzzySearchTokenizer, ListType.NGRAM);
             search.search(new ArrayList<>(queryTokens), 0, null, result);
             System.out.println("fuzzy search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 

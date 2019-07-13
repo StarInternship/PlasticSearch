@@ -9,26 +9,26 @@ import java.util.*;
 public class Search {
     private final Map<File, Set<String>> ngramTokensList = new HashMap<>();
     private final Map<File, Set<String>> exactTokensList = new HashMap<>();
+    private final Map<ListType, Map<File, Set<String>>> lists = new HashMap<>();
     private Map<File, Set<String>> currentList;
     private Tokenizer queryTokenizer;
+
+    {
+        lists.put(ListType.EXACT, exactTokensList);
+        lists.put(ListType.NGRAM, ngramTokensList);
+    }
 
     public void insertNgram(File file, Set<String> tokens) {
         ngramTokensList.put(file, tokens);
     }
 
     public void insertExact(File file, Set<String> tokens) {
-        ngramTokensList.get(file).addAll(tokens);
         exactTokensList.put(file, tokens);
     }
 
-    public void setQueryTokenizer(Tokenizer queryTokenizer) {
+    public void setQueryTokenizer(Tokenizer queryTokenizer, ListType type) {
         this.queryTokenizer = queryTokenizer;
-
-        if (queryTokenizer instanceof NgramSearchTokenizer) {
-            currentList = ngramTokensList;
-        } else {
-            currentList = exactTokensList;
-        }
+        currentList = lists.get(type);
     }
 
     public void search(ArrayList<String> queryTokens, int index, LinkedList<File> files, Set<File> result) {
