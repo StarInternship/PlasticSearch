@@ -1,10 +1,38 @@
 package models.search;
 
-import java.util.List;
+import models.analyzer.Analyzer;
+import models.tokenizer.Tokenizer;
 
-public interface Search {
+import java.io.File;
+import java.util.*;
 
-    void preprocess(List<String> list);
+public class Search {
+    private final Analyzer analyzer;
+    private final Tokenizer tokenizer;
+    private final Map<File, Set<String>> tokensList = new HashMap<>();
 
-    void search(String query);
+    public Search(Analyzer analyzer, Tokenizer tokenizer) {
+        this.analyzer = analyzer;
+        this.tokenizer = tokenizer;
+    }
+
+    public void preprocess(Map<File, String> list) {
+        list.forEach(
+                (file, text) -> tokensList.put(file, tokenizer.tokenize(analyzer.cleanText(text)))
+        );
+    }
+
+    public List<File> search(String query) {
+        List<File> matchedFiles = new ArrayList<>();
+        Set<String> queryTokens = tokenizer.tokenize(analyzer.cleanText(query));
+
+        tokensList.forEach(((file, dataTokens) -> {
+            for (String queryToken : queryTokens) {
+                if (!dataTokens.contains(queryToken)) return;
+            }
+            matchedFiles.add(file);
+        }));
+
+        return matchedFiles;
+    }
 }
