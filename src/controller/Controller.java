@@ -1,6 +1,7 @@
 package controller;
 
 import models.search.Search;
+import models.tokenizer.FuzzySearchTokenizer;
 import models.tokenizer.NgramSearchTokenizer;
 import view.FileImporter;
 import view.View;
@@ -16,6 +17,7 @@ public class Controller {
     private View view = new View();
     private final String PATH;
     private final NgramSearchTokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
+    private final FuzzySearchTokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
 
     public Controller(String PATH) {
         this.PATH = PATH;
@@ -40,8 +42,12 @@ public class Controller {
             String query = view.readNextLine();
             Set<File> result = new HashSet<>();
 
-            search.setQueryTokenizer(ngramSearchTokenizer);
             Set<String> queryTokens = ngramSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
+
+            search.setQueryTokenizer(ngramSearchTokenizer);
+            search.search(new LinkedList<>(queryTokens), null, result);
+
+            search.setQueryTokenizer(fuzzySearchTokenizer);
             search.search(new LinkedList<>(queryTokens), null, result);
 
             view.showResult(result);
