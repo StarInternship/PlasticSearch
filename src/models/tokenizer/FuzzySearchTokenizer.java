@@ -40,9 +40,9 @@ public class FuzzySearchTokenizer implements Tokenizer {
     private LinkedList<String> insert(String token) {
         LinkedList<String> inserts = new LinkedList<>();
 
-        for (int i = 0; i < token.length(); i++) {
+        for (int i = 0; i <= token.length(); i++) {
             for (char c : characters) {
-                if (c == token.charAt(i)) continue;
+                if (i < token.length() && c == token.charAt(i)) continue;
                 inserts.add(token.substring(0, i) + c + token.substring(i));
             }
         }

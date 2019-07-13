@@ -21,10 +21,8 @@ public interface Tokenizer {
         Set<String> tokenSet = new HashSet<>();
 
         Arrays.stream(text.split(SPLITTER)).forEach(token -> {
-            if (token.length() <= min) {
-                tokenSet.add(token);
-            } else {
-                final int MAX = Math.min(max, token.length());
+            if (token.length() > min) {
+                final int MAX = Math.min(max, token.length() - 1);
 
                 for (int length = min; length <= MAX; length++) {
                     for (int start = 0; start + length <= token.length(); start++) {

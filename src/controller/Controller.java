@@ -9,7 +9,6 @@ import view.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Controller {
     private static final int NGRAM_MIN = 3;
@@ -32,12 +31,15 @@ public class Controller {
 
         long currentTime = System.currentTimeMillis();
 
-        filesData.forEach(((file, text) ->
-                search.insert(
-                        file, ngramSearchTokenizer.tokenize(
-                                ngramSearchTokenizer.cleanText(text), NGRAM_MIN, NGRAM_MAX
-                        )
-                )
+        filesData.forEach(((file, text) -> {
+            String cleanText = ngramSearchTokenizer.cleanText(text);
+            search.insertNgram(
+                    file, ngramSearchTokenizer.tokenize(
+                            cleanText, NGRAM_MIN, NGRAM_MAX
+                    )
+            );
+            search.insertExact(file, ngramSearchTokenizer.tokenize(cleanText));
+        }
         ));
 
         System.out.println("preprocess duration: " + (System.currentTimeMillis() - currentTime) + "ms");
