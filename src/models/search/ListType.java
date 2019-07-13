@@ -1,5 +1,5 @@
 package models.search;
 
 public enum ListType {
-    EXACT, NGRAM
+    EXACT, NGRAM, FUZZY
 }

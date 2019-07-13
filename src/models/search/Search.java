@@ -1,6 +1,5 @@
 package models.search;
 
-import models.tokenizer.NgramSearchTokenizer;
 import models.tokenizer.Tokenizer;
 
 import java.io.File;
@@ -16,6 +15,7 @@ public class Search {
     {
         lists.put(ListType.EXACT, exactTokensList);
         lists.put(ListType.NGRAM, ngramTokensList);
+        lists.put(ListType.FUZZY, exactTokensList);
     }
 
     public void insertNgram(File file, Set<String> tokens) {
