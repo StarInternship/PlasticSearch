@@ -63,7 +63,7 @@ public class Controller {
             System.out.println("ngram search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
             currentTime = System.currentTimeMillis();
-            search.setQueryTokenizer(fuzzySearchTokenizer, ListType.NGRAM);
+            search.setQueryTokenizer(fuzzySearchTokenizer, ListType.EXACT);
             search.search(new ArrayList<>(queryTokens), 0, null, result);
             System.out.println("fuzzy search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
