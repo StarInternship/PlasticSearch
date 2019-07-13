@@ -1,5 +1,6 @@
 package controller;
 
+import models.search.ListType;
 import models.search.Search;
 import models.tokenizer.FuzzySearchTokenizer;
 import models.tokenizer.NgramSearchTokenizer;
@@ -9,11 +10,10 @@ import view.View;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Controller {
     private static final int NGRAM_MIN = 3;
-    private static final int NGRAM_MAX = 10;
+    private static final int NGRAM_MAX = 30;
     private View view = new View();
     private final String PATH;
     private final NgramSearchTokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
@@ -30,25 +30,42 @@ public class Controller {
 
         Map<File, String> filesData = fileImporter.readFiles();
 
-        filesData.forEach(((file, text) ->
-                search.insert(
-                        file, ngramSearchTokenizer.tokenize(
-                                ngramSearchTokenizer.cleanText(text), NGRAM_MIN, NGRAM_MAX
-                        )
-                )
-        ));
+        long currentTime = System.currentTimeMillis();
+
+        filesData.forEach(((file, text) -> {
+            String cleanText = ngramSearchTokenizer.cleanText(text);
+            search.insertNgram(
+                    file, ngramSearchTokenizer.tokenize(
+                            cleanText, NGRAM_MIN, NGRAM_MAX
+                    )
+            );
+            search.insertExact(file, ngramSearchTokenizer.tokenize(cleanText));
+        }));
+
+        System.out.println("preprocess duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
         while (true) {
             String query = view.readNextLine();
             Set<File> result = new HashSet<>();
 
+            currentTime = System.currentTimeMillis();
             Set<String> queryTokens = ngramSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
+            System.out.println("query process duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
-            search.setQueryTokenizer(ngramSearchTokenizer);
+            currentTime = System.currentTimeMillis();
+            search.setQueryTokenizer(ngramSearchTokenizer, ListType.EXACT);
             search.search(new ArrayList<>(queryTokens), 0, null, result);
+            System.out.println("exact search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
-            search.setQueryTokenizer(fuzzySearchTokenizer);
+            currentTime = System.currentTimeMillis();
+            search.setQueryTokenizer(ngramSearchTokenizer, ListType.NGRAM);
             search.search(new ArrayList<>(queryTokens), 0, null, result);
+            System.out.println("ngram search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+
+            currentTime = System.currentTimeMillis();
+            search.setQueryTokenizer(fuzzySearchTokenizer, ListType.NGRAM);
+            search.search(new ArrayList<>(queryTokens), 0, null, result);
+            System.out.println("fuzzy search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
 
             view.showResult(result);
         }
