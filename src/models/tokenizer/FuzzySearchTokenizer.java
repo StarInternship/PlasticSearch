@@ -1,6 +1,7 @@
 package models.tokenizer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class FuzzySearchTokenizer implements Tokenizer {
 
     @Override
     public LinkedList<String> develop(String token) {
-        LinkedList<String> developedTokens = new LinkedList<>();
+        LinkedList<String> developedTokens = new LinkedList<>(Collections.singletonList(token));
 
         developedTokens.addAll(insert(token));
         developedTokens.addAll(delete(token));
@@ -41,6 +42,14 @@ public class FuzzySearchTokenizer implements Tokenizer {
     }
 
     private LinkedList<String> substitute(String token) {
-        return null;
+        LinkedList<String> substitutes = new LinkedList<>();
+
+        for (int i = 0; i < token.length(); i++) {
+            for (char c : characters) {
+                if (c == token.charAt(i)) continue;
+                substitutes.add(token.substring(0, i) + c + token.substring(i + 1));
+            }
+        }
+        return substitutes;
     }
 }
