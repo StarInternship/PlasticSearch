@@ -5,10 +5,10 @@ import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FileView {
+public class FileImporter {
     private final String PATH;
 
-    public FileView(String path) {
+    public FileImporter(String path) {
         PATH = path;
     }
 

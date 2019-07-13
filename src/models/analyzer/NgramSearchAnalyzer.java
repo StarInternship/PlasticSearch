@@ -1,7 +1,7 @@
 package models.analyzer;
 
-public class ExactSearchAnalyzer implements Analyzer {
-    @Override
+public class NgramSearchAnalyzer {
+
     public String cleanText(String text) {
         return text.toLowerCase();
     }
