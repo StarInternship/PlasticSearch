@@ -43,5 +43,6 @@ public class Search {
 
             search(queryTokens, newFiles, result);
         }
+        files.clear();
     }
 }
