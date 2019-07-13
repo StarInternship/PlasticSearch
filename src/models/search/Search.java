@@ -24,7 +24,7 @@ public class Search {
         if (files.isEmpty()) {
             return;
         }
-        if (queryTokens.isEmpty()) {
+        if (index == queryTokens.size()) {
             result.addAll(files);
             return;
         }
