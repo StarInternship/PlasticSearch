@@ -1,9 +1,7 @@
 package controller;
 
-import models.search.ListType;
 import models.search.Search;
 import models.tokenizer.ExactSearchTokenizer;
-import models.tokenizer.FuzzySearchTokenizer;
 import models.tokenizer.NgramSearchTokenizer;
 import models.tokenizer.Tokenizer;
 import view.FileImporter;
@@ -18,11 +16,10 @@ public class Controller {
     private final String PATH;
     private final Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
     private final Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
-    private final Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
     private final Search search = new Search();
     private Set<File> result;
     private Set<String> queryTokens;
-    private long currentTime;
+    private double currentTime;
 
     public Controller(String PATH) {
         this.PATH = PATH;
@@ -36,11 +33,7 @@ public class Controller {
             result = new HashSet<>();
 
             queryProcess(query);
-
-            doSearch(ListType.EXACT, exactSearchTokenizer);
-            doSearch(ListType.NGRAM, ngramSearchTokenizer);
-            doSearch(ListType.FUZZY, fuzzySearchTokenizer);
-
+            doSearch();
             view.showResult(result);
         }
     }
@@ -50,31 +43,34 @@ public class Controller {
 
         Map<File, String> filesData = fileImporter.readFiles();
 
-        currentTime = System.currentTimeMillis();
+        currentTime = System.nanoTime() / 1000000.0;
 
         filesData.forEach(((file, text) -> {
             String cleanText = ngramSearchTokenizer.cleanText(text);
-            search.insertNgram(file, ngramSearchTokenizer.tokenize(cleanText));
-            search.insertExact(file, exactSearchTokenizer.tokenize(cleanText));
+            ngramSearchTokenizer.tokenizeData(file, cleanText, search.getNgramData());
+            exactSearchTokenizer.tokenizeData(file, cleanText, search.getExactData());
         }));
 
-        System.out.println("preprocess duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+        System.out.println("preprocess duration: " + getTimeDifference() + "ms");
     }
 
     private void queryProcess(String query) {
-        currentTime = System.currentTimeMillis();
+        currentTime = System.nanoTime() / 1000000.0;
 
-        queryTokens = exactSearchTokenizer.tokenize(ngramSearchTokenizer.cleanText(query));
+        queryTokens = exactSearchTokenizer.tokenizeQuery(ngramSearchTokenizer.cleanText(query));
 
-        System.out.println("query process duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+        System.out.println("query process duration: " + getTimeDifference() + "ms");
     }
 
-    private void doSearch(ListType listType, Tokenizer tokenizer) {
-        currentTime = System.currentTimeMillis();
+    private void doSearch() {
+        currentTime = System.nanoTime() / 1000000.0;
 
-        search.setQueryTokenizer(tokenizer, listType);
-        search.search(new ArrayList<>(queryTokens), 0, null, result);
+        search.search(new ArrayList<>(queryTokens),  result);
 
-        System.out.println(listType + " search duration: " + (System.currentTimeMillis() - currentTime) + "ms");
+        System.out.println("search duration: " + getTimeDifference() + "ms");
+    }
+
+    private double getTimeDifference() {
+        return System.nanoTime() / 1000000.0 - currentTime;
     }
 }

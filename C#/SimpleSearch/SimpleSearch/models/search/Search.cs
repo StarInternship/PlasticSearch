@@ -10,73 +10,45 @@ namespace SimpleSearch.models.search
 {
     class Search
     {
-        private readonly IDictionary<string, ISet<string>> ngramTokensList = new Dictionary<string, ISet<string>>();
-        private readonly IDictionary<string, ISet<string>> exactTokensList = new Dictionary<string, ISet<string>>();
-        private readonly IDictionary<ListType, IDictionary<string, ISet<string>>> lists = new Dictionary<ListType, IDictionary<string, ISet<string>>>();
-        private IDictionary<string, ISet<string>> currentList;
-        private Tokenizer queryTokenizer;
+        private readonly IDictionary<string, IDictionary<string, int>> ngramData = new Dictionary<string, IDictionary<string, int>>();
+        private readonly IDictionary<string, IDictionary<string, int>> exactData = new Dictionary<string, IDictionary<string, int>>();
+        private readonly Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
+        private readonly Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
+        private readonly Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
 
-        public Search()
+        public void search(List<string> queryTokens, ISet<string> result)
         {
-            lists[ListType.EXACT] = exactTokensList;
-            lists[ListType.NGRAM] = ngramTokensList;
-            lists[ListType.FUZZY] = exactTokensList;
-        }
-
-        public void InsertNgram(string filePath, ISet<string> tokens)
-        {
-            ngramTokensList[filePath] = tokens;
-        }
-
-        public void InsertExact(string filePath, ISet<string> tokens)
-        {
-            exactTokensList[filePath] = tokens;
-        }
-
-        public void setQueryTokenizer(Tokenizer queryTokenizer, ListType type)
-        {
-            this.queryTokenizer = queryTokenizer;
-            currentList = lists[type];
-        }
-
-        public void search(List<string> queryTokens, int index, List<string> filePaths, ISet<string> result)
-        {
-            if (filePaths == null)
+            bool first = true;
+            foreach (string queryToken in queryTokens)
             {
-                filePaths = new List<string>(currentList.Keys);
-            }
-            if (filePaths.Count == 0)
-            {
-                return;
-            }
-            if (queryTokens.Count == index)
-            {
-                result.UnionWith(filePaths);
-                return;
-            }
+                ISet<string> foundFilePaths = new HashSet<string>();
 
-            string currentToken = queryTokens[index];
-            List<string> developedTokens = queryTokenizer.Develope(currentToken);
+                findFiles(queryToken, foundFilePaths, exactSearchTokenizer, exactData);
+                findFiles(queryToken, foundFilePaths, ngramSearchTokenizer, ngramData);
+                findFiles(queryToken, foundFilePaths, fuzzySearchTokenizer, exactData);
 
-            foreach (string token in developedTokens)
-            {
-                List<string> newFilePaths = new List<string>();
-
-                foreach (string filePath in filePaths)
+                if (first)
                 {
-                    if (currentList[filePath].Contains(token))
-                    {
-                        newFilePaths.Add(filePath);
-                    }
+                    result.UnionWith(foundFilePaths);
+                    first = false;
+                } else
+                {
+                    result.IntersectWith(foundFilePaths);
                 }
-
-                search(queryTokens, index + 1, newFilePaths, result);
             }
         }
-    }
 
-    public enum ListType
-    {
-        EXACT, NGRAM, FUZZY
+        private void findFiles(string queryToken, ISet<string> foundFilePaths, Tokenizer queryTokenizer, IDictionary<string, IDictionary<string, int>> data)
+        {
+            List<string> developedTokens = queryTokenizer.Develope(queryToken);
+
+            developedTokens.ForEach(token =>
+            {
+                if (data.ContainsKey(token))
+                {
+                    foundFilePaths.UnionWith(data[token].Keys);
+                }
+            });
+        }
     }
 }

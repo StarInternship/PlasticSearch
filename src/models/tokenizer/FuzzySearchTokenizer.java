@@ -1,9 +1,10 @@
 package models.tokenizer;
 
+import java.io.File;
 import java.util.*;
 
 public class FuzzySearchTokenizer implements Tokenizer {
-    private static final int FUZZINESS = 1;
+    private static final int FUZZINESS = 2;
     private static List<Character> characters = new ArrayList<>();
 
     static {
@@ -16,7 +17,11 @@ public class FuzzySearchTokenizer implements Tokenizer {
     }
 
     @Override
-    public Set<String> tokenize(String text) {
+    public void tokenizeData(File file, String text, Map<String, Map<File, Integer>> data) {
+    }
+
+    @Override
+    public Set<String> tokenizeQuery(String text) {
         return new HashSet<>();
     }
 
