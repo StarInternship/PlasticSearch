@@ -11,6 +11,6 @@ namespace SimpleSearch.models.tokenizer
     {
         public override ISet<string> Tokenize(string text) => Regex.Split(text, SPLITTER).ToHashSet();
 
-        public override LinkedList<string> Develope(string token) => new LinkedList<string>((new string[] {token}).ToList());
+        public override List<string> Develope(string token) => (new string[] {token}).ToList();
     }
 }

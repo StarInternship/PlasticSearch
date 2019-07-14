@@ -31,7 +31,6 @@ namespace SimpleSearch.models.tokenizer
 
             return tokenSet;
         }
-        public override LinkedList<string> Develope(string token) => new LinkedList<string>((new string[] { token }).ToList());
-
+        public override List<string> Develope(string token) => (new string[] { token }).ToList();
     }
 }

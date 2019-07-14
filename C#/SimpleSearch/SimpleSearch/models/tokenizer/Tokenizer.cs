@@ -14,6 +14,6 @@ namespace SimpleSearch.models.tokenizer
 
         public abstract ISet<string> Tokenize(string text);
 
-        public abstract LinkedList<string> Develope(string token);
+        public abstract List<string> Develope(string token);
     }
 }
