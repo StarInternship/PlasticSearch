@@ -10,8 +10,8 @@ namespace SimpleSearch.models.search
 {
     class Search
     {
-        private readonly IDictionary<string, IDictionary<string, int>> ngramData = new Dictionary<string, IDictionary<string, int>>();
-        private readonly IDictionary<string, IDictionary<string, int>> exactData = new Dictionary<string, IDictionary<string, int>>();
+        public IDictionary<string, IDictionary<string, int>> ExactData { get; } = new Dictionary<string, IDictionary<string, int>>();
+        public IDictionary<string, IDictionary<string, int>> NgramData { get; } = new Dictionary<string, IDictionary<string, int>>();
         private readonly Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
         private readonly Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
         private readonly Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
@@ -23,9 +23,9 @@ namespace SimpleSearch.models.search
             {
                 ISet<string> foundFilePaths = new HashSet<string>();
 
-                findFiles(queryToken, foundFilePaths, exactSearchTokenizer, exactData);
-                findFiles(queryToken, foundFilePaths, ngramSearchTokenizer, ngramData);
-                findFiles(queryToken, foundFilePaths, fuzzySearchTokenizer, exactData);
+                findFiles(queryToken, foundFilePaths, exactSearchTokenizer, ExactData);
+                findFiles(queryToken, foundFilePaths, ngramSearchTokenizer, NgramData);
+                findFiles(queryToken, foundFilePaths, fuzzySearchTokenizer, ExactData);
 
                 if (first)
                 {

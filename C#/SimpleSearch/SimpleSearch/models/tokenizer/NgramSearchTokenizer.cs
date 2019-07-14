@@ -24,7 +24,7 @@ namespace SimpleSearch.models.tokenizer
                     {
                         for (int start = 0; start + length < +token.Length; start++)
                         {
-                            tokenSet.Add(token.Substring(start, start + length));
+                            tokenSet.Add(token.Substring(start, length));
                         }
                     }
                 }
@@ -44,9 +44,9 @@ namespace SimpleSearch.models.tokenizer
 
                     for (int length = MIN; length <= MAX; length++)
                     {
-                        for (int start = 0; start + length < +token.Length; start++)
+                        for (int start = 0; start + length < token.Length; start++)
                         {
-                            string newToken = token.Substring(start, start + length);
+                            string newToken = token.Substring(start, length);
 
                             if (data.ContainsKey(newToken))
                             {
