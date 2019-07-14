@@ -25,9 +25,17 @@ namespace SimpleSearch.models
                 string[] files = Directory.GetFiles(path);
                 foreach (string filePath in files)
                 {
+                  
+                    ReadFile(filePath, filesDictionary);
+                }
+                files = Directory.GetDirectories(path);
+                foreach (string filePath in files)
+                {
+                  
                     ReadFile(filePath, filesDictionary);
                 }
                 return;
+               
             }
             if (File.Exists(path))
             {
