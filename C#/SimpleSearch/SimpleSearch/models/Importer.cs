@@ -9,9 +9,9 @@ namespace SimpleSearch.models
 {
     class Importer
     {
-        private readonly string filesPath = "test_files";
+        private readonly string filesPath = "C:\\Users\\hadi\\source\\repos\\SimpleSearch\\C#\\SimpleSearch\\SimpleSearch\\test_files";
 
-        public IDictionary<string, string> ReadFiles()
+        public Dictionary<string, string> ReadFiles()
         {
             Dictionary<string, string> files = new Dictionary<string, string>();
             ReadFile(filesPath,files);
@@ -32,7 +32,7 @@ namespace SimpleSearch.models
             if (File.Exists(path))
             {
                 string text = File.ReadAllText(path);
-                filesDictionary.Add(path, text);
+                filesDictionary[path] = text;
             }
         }
     }
