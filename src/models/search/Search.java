@@ -11,23 +11,9 @@ import java.util.*;
 public class Search {
     private final Map<String, Map<File, Integer>> ngramData = new HashMap<>();
     private final Map<String, Map<File, Integer>> exactData = new HashMap<>();
-    private final Map<ListType, Map<String, Map<File, Integer>>> lists = new HashMap<>();
     private final Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
     private final Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
     private final Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
-    private Map<String, Map<File, Integer>> currentData;
-    private Tokenizer queryTokenizer;
-
-    {
-        lists.put(ListType.EXACT, exactData);
-        lists.put(ListType.NGRAM, ngramData);
-        lists.put(ListType.FUZZY, exactData);
-    }
-
-    public void setQueryTokenizer(Tokenizer queryTokenizer, ListType type) {
-        this.queryTokenizer = queryTokenizer;
-        currentData = lists.get(type);
-    }
 
     public void search(ArrayList<String> queryTokens, Set<File> result) {
         boolean first = true;
