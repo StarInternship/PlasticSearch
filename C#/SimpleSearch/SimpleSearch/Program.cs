@@ -14,21 +14,27 @@ namespace SimpleSearch
         static Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
         static Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
 
+        static List<string> result;
+        static List<string> queryTokens;
+        // static Search search = new Search();
         static void Main(string[] args)
         {
 
+            Preprocess();
 
             while (true)
             {
                 string query = Console.ReadLine();
 
-                
+                QueryProcess(query);
+
+                ShowResult(result);
 
             }
 
         }
 
-        static void preprocess()
+        static void Preprocess()
         {
             Importer importer = new Importer();
 
@@ -38,6 +44,24 @@ namespace SimpleSearch
             {
                 string cleanText = ngramSearchTokenizer.CleanText(pair.Value);
                 //TODO: ahmad:)
+            }
+        }
+
+        static void QueryProcess(string query)
+        {
+
+        }
+
+        static void DoSearch()
+        {
+
+        }
+
+        static void ShowResult(List<string> result)
+        {
+            foreach(string fileName in result)
+            {
+                Console.WriteLine(fileName);
             }
         }
     }
