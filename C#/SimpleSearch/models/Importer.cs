@@ -9,7 +9,7 @@ namespace SimpleSearch.models
 {
     class Importer
     {
-        private readonly string filesPath = @"../../test_files";
+        private readonly string filesPath = @"../../../../test_files";
 
         public Dictionary<string, string> ReadFiles()
         {
