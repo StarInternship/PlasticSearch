@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="models\Importer.cs" />
     <Compile Include="models\search\Search.cs" />
     <Compile Include="models\tokenizer\ExactSearchTokenizer.cs" />
     <Compile Include="models\tokenizer\FuzzySearchTokenizer.cs" />
@@ -53,6 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="test_files\TextFile1.txt" />
+    <Content Include="test_files\TextFile2.txt" />
+    <Content Include="test_files\x\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
