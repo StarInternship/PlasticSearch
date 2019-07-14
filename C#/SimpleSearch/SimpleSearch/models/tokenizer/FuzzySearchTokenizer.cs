@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleSearch.models.tokenizer
 {
     class FuzzySearchTokenizer : Tokenizer
     {
-        private static readonly int FUZZINESS = 1;
+        private static readonly int FUZZINESS = 2;
         private static readonly IList<char> characters = new List<char>();
 
         static FuzzySearchTokenizer()
@@ -23,7 +21,7 @@ namespace SimpleSearch.models.tokenizer
             }
         }
 
-        public override ISet<string> Tokenize(string text) => new HashSet<string>();
+        public override ISet<string> TokenizeQuery(string text) => new HashSet<string>();
         public override List<string> Develope(string token)
         {
             List<String> developedTokens = new List<string>(new string[] {token}.ToList());
@@ -80,6 +78,10 @@ namespace SimpleSearch.models.tokenizer
                 }
             }
             return substitutes;
+        }
+
+        public override void tokenizeData(string filePath, string text, IDictionary<string, IDictionary<string, int>> data)
+        {
         }
     }
 }

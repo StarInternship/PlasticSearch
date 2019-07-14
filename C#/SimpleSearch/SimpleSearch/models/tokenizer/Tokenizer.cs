@@ -12,7 +12,9 @@ namespace SimpleSearch.models.tokenizer
 
         public string CleanText(string text) => text.ToLower();
 
-        public abstract ISet<string> Tokenize(string text);
+        public abstract void tokenizeData(string filePath, string text, IDictionary<string, IDictionary<string, int>> data);
+
+        public abstract ISet<string> TokenizeQuery(string text);
 
         public abstract List<string> Develope(string token);
     }
