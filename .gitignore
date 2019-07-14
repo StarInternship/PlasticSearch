@@ -87,7 +87,7 @@ fabric.properties
 *.vpp
 
 # test files
-text_files/*
+test_files/**/*
 
 *.rsuser
 *.suo
