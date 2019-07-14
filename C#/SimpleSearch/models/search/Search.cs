@@ -1,17 +1,12 @@
 ﻿using SimpleSearch.models.tokenizer;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleSearch.models.search
 {
     class Search
     {
-        public IDictionary<string, IDictionary<string, int>> ExactData { get; } = new Dictionary<string, IDictionary<string, int>>();
-        public IDictionary<string, IDictionary<string, int>> NgramData { get; } = new Dictionary<string, IDictionary<string, int>>();
+        public IDictionary<string, InvertedIndex> ExactData { get; } = new Dictionary<string, InvertedIndex>();
+        public IDictionary<string, InvertedIndex> NgramData { get; } = new Dictionary<string, InvertedIndex>();
         private readonly Tokenizer exactSearchTokenizer = new ExactSearchTokenizer();
         private readonly Tokenizer ngramSearchTokenizer = new NgramSearchTokenizer();
         private readonly Tokenizer fuzzySearchTokenizer = new FuzzySearchTokenizer();
@@ -38,7 +33,7 @@ namespace SimpleSearch.models.search
             }
         }
 
-        private void findFiles(string queryToken, ISet<string> foundFilePaths, Tokenizer queryTokenizer, IDictionary<string, IDictionary<string, int>> data)
+        private void findFiles(string queryToken, ISet<string> foundFilePaths, Tokenizer queryTokenizer, IDictionary<string, InvertedIndex> data)
         {
             List<string> developedTokens = queryTokenizer.Develope(queryToken);
 

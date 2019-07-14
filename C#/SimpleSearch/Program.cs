@@ -15,7 +15,7 @@ namespace SimpleSearch
         private static readonly Search search = new Search();
         private static ISet<string> result;
         private static ISet<string> queryTokens;
-        private static double currentTime;
+        private static readonly Stopwatch sw = new Stopwatch();
 
         static void Main(string[] args)
         {
@@ -38,50 +38,50 @@ namespace SimpleSearch
 
             IDictionary<string, string> files = importer.ReadFiles();
 
-            currentTime = MilliTime();
+            sw.Start();
 
-            foreach (KeyValuePair<string, string> pair in files)
+            foreach (var pair in files)
             {
                 string cleanText = ngramSearchTokenizer.CleanText(pair.Value);
                 ngramSearchTokenizer.tokenizeData(pair.Key, cleanText, search.NgramData);
                 exactSearchTokenizer.tokenizeData(pair.Key, cleanText, search.ExactData);
             }
 
-            Console.WriteLine("Preprocess duration: " + (MilliTime() - currentTime) + " ms");
+            sw.Stop();
+            Console.WriteLine("Preprocess duration: " + sw.ElapsedMilliseconds + " ms");
         }
 
         static void QueryProcess(string query)
         {
-            currentTime = MilliTime();
+            sw.Restart();
 
             queryTokens = exactSearchTokenizer.TokenizeQuery(ngramSearchTokenizer.CleanText(query));
 
-            Console.WriteLine("Query process duration: " + (MilliTime() - currentTime) + " ms");
+            sw.Stop();
+            Console.WriteLine("Query process duration: " + sw.ElapsedMilliseconds + " ms");
         }
 
         static void DoSearch()
         {
-            currentTime = MilliTime();
+            sw.Restart();
 
             search.search(queryTokens.ToList(), result);
 
-            Console.WriteLine("Search duration: " + (MilliTime() - currentTime) + " ms");
+            sw.Stop();
+            Console.WriteLine("Search duration: " + sw.ElapsedMilliseconds + " ms");
         }
 
         static void ShowResult(ISet<string> result)
         {
+            if (result.Count == 0)
+            {
+                Console.WriteLine("Not found!");
+                return;
+            }
             foreach(string fileName in result)
             {
                 Console.WriteLine(fileName);
             }
-        }
-
-        private static double MilliTime()
-        {
-            long nano = 10000L * Stopwatch.GetTimestamp();
-            nano /= TimeSpan.TicksPerMillisecond;
-            nano *= 100L;
-            return nano / 1000000.0;
         }
     }
 }

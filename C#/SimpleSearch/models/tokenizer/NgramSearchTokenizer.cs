@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleSearch.models.search;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -34,7 +35,7 @@ namespace SimpleSearch.models.tokenizer
         }
         public override List<string> Develope(string token) => (new string[] { token }).ToList();
 
-        public override void tokenizeData(string filePath, string text, IDictionary<string, IDictionary<string, int>> data)
+        public override void tokenizeData(string filePath, string text, IDictionary<string, InvertedIndex> data)
         {
             Regex.Split(text, SPLITTER).ToList().ForEach(token =>
             {
@@ -61,7 +62,7 @@ namespace SimpleSearch.models.tokenizer
                             }
                             else
                             {
-                                data[newToken] = new Dictionary<string, int>
+                                data[newToken] = new InvertedIndex
                                 {
                                     [filePath] = 1
                                 };
