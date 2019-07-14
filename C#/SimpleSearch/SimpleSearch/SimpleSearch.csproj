@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="models\Importer.cs" />
+    <Compile Include="models\search\Search.cs" />
     <Compile Include="models\tokenizer\ExactSearchTokenizer.cs" />
     <Compile Include="models\tokenizer\FuzzySearchTokenizer.cs" />
     <Compile Include="models\tokenizer\NgramSearchTokenizer.cs" />
