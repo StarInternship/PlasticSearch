@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleSearch.models.search;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -80,7 +81,7 @@ namespace SimpleSearch.models.tokenizer
             return substitutes;
         }
 
-        public override void tokenizeData(string filePath, string text, IDictionary<string, IDictionary<string, int>> data)
+        public override void tokenizeData(string filePath, string text, IDictionary<string, InvertedIndex> data)
         {
         }
     }
