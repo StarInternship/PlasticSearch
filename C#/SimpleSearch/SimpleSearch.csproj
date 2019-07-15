@@ -56,9 +56,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="test_files\TextFile1.txt" />
-    <Content Include="test_files\TextFile2.txt" />
-    <Content Include="test_files\x\TextFile1.txt" />
+    <Folder Include="test_files\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,7 +8,7 @@ namespace SimpleSearch.models.tokenizer
 {
     abstract class Tokenizer
     {
-        protected static readonly string SPLITTER = "\\s";
+        protected static readonly string SPLITTER = "[|\\s|.|'|:|_|-|?|/|@|<|>|!|(|)|]";
 
         public string CleanText(string text) => text.ToLower();
 

@@ -20,7 +20,7 @@ namespace SimpleSearch
         static void Main(string[] args)
         {
             Preprocess();
-
+            
             while (true)
             {
                 string query = Console.ReadLine();
@@ -37,7 +37,6 @@ namespace SimpleSearch
             Importer importer = new Importer();
 
             IDictionary<string, string> files = importer.ReadFiles();
-
             currentTime = MilliTime();
 
             foreach (KeyValuePair<string, string> pair in files)

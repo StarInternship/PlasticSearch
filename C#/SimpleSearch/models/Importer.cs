@@ -14,32 +14,34 @@ namespace SimpleSearch.models
         public Dictionary<string, string> ReadFiles()
         {
             Dictionary<string, string> files = new Dictionary<string, string>();
-            ReadFile(filesPath, files);
+            ReadDirectory(filesPath, files);
             return files;
         }
 
         public void ReadFile(string path, Dictionary<string, string> filesDictionary)
+        {
+            if (File.Exists(path))
+            {
+                string text = File.ReadAllText(path);
+                filesDictionary[path] = text;
+                Console.WriteLine(path + " -> " + text);
+            }
+        }
+
+        public void ReadDirectory(string path, Dictionary<string, string> filesDictionary)
         {
             if (Directory.Exists(path))
             {
                 string[] files = Directory.GetFiles(path);
                 foreach (string filePath in files)
                 {
-
                     ReadFile(filePath, filesDictionary);
                 }
                 string[] directories = Directory.GetDirectories(path);
                 foreach (string filePath in directories)
                 {
-                    ReadFile(filePath, filesDictionary);
+                    ReadDirectory(filePath, filesDictionary);
                 }
-                return;
-
-            }
-            if (File.Exists(path))
-            {
-                string text = File.ReadAllText(path);
-                filesDictionary[path] = text;
             }
         }
     }
